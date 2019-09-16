@@ -12,19 +12,6 @@ describe("add", () => {
       expect(native.add(a, b)).toBe(native.add(b, a))
     }
   )
-
-  check.it(
-    "should fail if one of the arguments is not a number",
-    gen.any,
-    gen.any,
-    (a, b) => {
-      if (typeof a === "number" && typeof b === "number") {
-        expect(native.add(a, b)).not.toThrow()
-      } else {
-        expect(() => native.add(a, b)).toThrow()
-      }
-    }
-  )
 })
 
 describe("sub", () => {
@@ -41,19 +28,6 @@ describe("sub", () => {
       }
     }
   )
-
-  check.it(
-    "should fail if one of the arguments is not a number",
-    gen.any,
-    gen.any,
-    (a, b) => {
-      if (typeof a === "number" && typeof b === "number") {
-        expect(native.sub(a, b)).not.toThrow()
-      } else {
-        expect(() => native.sub(a, b)).toThrow()
-      }
-    }
-  )
 })
 
 describe("mul", () => {
@@ -66,19 +40,6 @@ describe("mul", () => {
       expect(native.mul(a, b)).toBe(native.mul(b, a))
     }
   )
-
-  check.it(
-    "should fail if one of the arguments is not a number",
-    gen.any,
-    gen.any,
-    (a, b) => {
-      if (typeof a === "number" && typeof b === "number") {
-        expect(native.mul(a, b)).not.toThrow()
-      } else {
-        expect(() => native.mul(a, b)).toThrow()
-      }
-    }
-  )
 })
 
 describe("div", () => {
@@ -88,19 +49,6 @@ describe("div", () => {
     gen.numberWithin(-9999999, 9999999),
     (a, b) => {
       expect(native.div(a, b)).toBe(a / b)
-    }
-  )
-
-  check.it(
-    "should fail if one of the arguments is not a number",
-    gen.any,
-    gen.any,
-    (a, b) => {
-      if (typeof a === "number" && typeof b === "number") {
-        expect(native.div(a, b)).not.toThrow()
-      } else {
-        expect(() => native.div(a, b)).toThrow()
-      }
     }
   )
 })
@@ -192,4 +140,10 @@ describe("isInstance", () => {
       expect(native.isInstance(C, new C())).toBe(true)
     }
   )
+})
+
+describe("not", () => {
+  check.it("should take a value and negate it", gen.any, a => {
+    expect(native.not(a)).toBe(!a)
+  })
 })

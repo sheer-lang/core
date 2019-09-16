@@ -32,6 +32,22 @@
 (defn lazy-seq [coll]
   (.toSeq (js->sheer coll)))
 
+(defn init [coll]
+  (.butLast (lazy-seq coll)))
+
+(defn tail [coll]
+  (.rest (lazy-seq coll)))
+
+(defn first [coll]
+  (or 
+    (.first (lazy-seq coll))
+    null))
+
+(defn last [coll]
+  (or 
+    (.last (lazy-seq coll)
+    null)))
+
 (defn map [f coll]
   (.map (lazy-seq coll) f))
 
@@ -87,10 +103,21 @@
 
 ;; Arithmetic Operations
 
-(def + native/add)
-(def - native/sub)
-(def / native/div)
-(def * native/mul)
+(defn- arithmetic [op vals]
+  (fold op vals))
+
+(defn + [& vals]
+  (arithmetic native/add vals))
+
+(defn - [& vals] 
+  (arithmetic native/sub vals))
+
+(defn / [& vals]
+  (arithmetic native/div vals))
+
+(defn * [& vals]
+  (arithmetic native/mul vals))
+
 (def = native/eq)
 (def not native/not)
 (def not= native/notEq)

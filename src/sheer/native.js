@@ -10,34 +10,18 @@ const root =
 // Arithmetic Operations
 
 module.exports.add = runtime.curry((a, b) => {
-  if (is.not.number(a) || is.not.number(b)) {
-    throw "Expected arguments to be numbers"
-  }
-
   return a + b
 })
 
 module.exports.sub = runtime.curry((a, b) => {
-  if (is.not.number(a) || is.not.number(b)) {
-    throw "Expected arguments to be numbers"
-  }
-
   return a - b
 })
 
 module.exports.mul = runtime.curry((a, b) => {
-  if (is.not.number(a) || is.not.number(b)) {
-    throw "Expected arguments to be numbers"
-  }
-
   return a * b
 })
 
 module.exports.div = runtime.curry((a, b) => {
-  if (is.not.number(a) || is.not.number(b)) {
-    throw "Expected arguments to be numbers"
-  }
-
   return a / b
 })
 
@@ -59,8 +43,14 @@ module.exports.notEq = runtime.curry((l, r) => {
 
 // Interop
 
+const objects_get = runtime.curry((k, coll) => {
+  return coll[k]
+})
+
+module.exports.objects_get = objects_get
+
 module.exports.fromGlobal = name => {
-  return root[name]
+  return objects_get(name, root)
 }
 
 module.exports.instaciate = runtime.curry((Cls, args) => {
@@ -95,8 +85,4 @@ module.exports.type = v => {
 
 module.exports.apply = runtime.curry((fn, args) => {
   return fn(...args)
-})
-
-module.exports.objects_get = runtime.curry((k, coll) => {
-  return coll[k]
 })
