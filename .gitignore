@@ -1,0 +1,4 @@
+*lock
+out/
+.sheer_meta/
+node_modules/

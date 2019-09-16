@@ -1,0 +1,151 @@
+(ns sheer.core
+  :import [["@sheer/lang/runtime" :as lang.runtime]
+           ["./native" :as native]])
+
+;; Interop
+
+(def type native/type)
+(def throw native/throw)
+(def apply native/apply)
+(def try native/tryCatch)
+(def get native/objects_get)
+(def discard native/discard)
+(def from-global native/fromGlobal)
+
+(defn has? [k v]
+  (not (not (get k v))))
+
+(defn sheer->js [coll]
+  (if (has? :toJS coll)
+    (.toJS coll)
+    coll))
+
+(def js->sheer lang.runtime/fromJS)
+
+(defn new [c & args]
+  (native/instaciate c args))
+
+;; Collections Operations
+
+(def pick lang.runtime/pick) 
+
+(defn lazy-seq [coll]
+  (.toSeq (js->sheer coll)))
+
+(defn map [f coll]
+  (.map (lazy-seq coll) f))
+
+(defn filter [f coll] 
+  (.filter (lazy-seq coll) f))
+
+(defn fold [f coll] 
+  (.reduce (lazy-seq coll) f))
+
+(defn foldr [f coll] 
+  (.reduceRight (lazy-seq coll) f))
+
+(defn fold-init [f init coll]
+  (.reduce (lazy-seq coll) f init))
+
+(defn foldr-init [f init coll]
+  (.reduceRight (lazy-seq coll) f init))
+
+(defn each [f coll]
+  (.forEach (lazy-seq coll) f))
+
+(defn update [k f coll]
+  (.update (lazy-seq coll) k f))
+
+(defn update-in [ks f coll]
+  (.updateIn (lazy-seq coll) (sheer->js ks) f))
+
+(defn join [d coll]
+  (.join (lazy-seq coll) d))
+
+(defn push [v coll]
+  (.push v (lazy-seq coll)))
+
+(defn pop [coll] (.pop (lazy-seq coll)))
+
+(defn flatten [coll]
+  (.flatten (lazy-seq coll)))
+
+(defn keys [map]
+  (.keys map))
+
+(defn assoc [k v coll]
+  (.set coll k v))
+
+(defn assoc-in [ks v coll]
+  (.setIn coll (sheer->js ks) v))
+
+(defn merge [& colls]
+  (lazy-seq
+    (fold 
+      (fn [acc coll] (.merge acc coll))
+      colls)))
+
+;; Arithmetic Operations
+
+(def + native/add)
+(def - native/sub)
+(def / native/div)
+(def * native/mul)
+(def = native/eq)
+(def not native/not)
+(def not= native/notEq)
+
+;; Assertions
+
+(defn is? [t v] 
+  (= t (type v)))
+
+(defn string? [v]
+  (is? "string" v))
+
+(def keyword? string?)
+
+(defn bool? [v]
+  (is? "boolean" v))
+
+(defn number? [v]
+  (is? "number" v))
+
+(defn NaN? [v]
+  (is? "NaN" v))
+
+(defn instance? [c v]
+  (lang.runtime/isInstance c v))
+
+;; Utils
+
+(def curry lang.runtime/curry)
+
+(defn id [x] x)
+
+(defn -> [x & fns]
+  (fold-init
+    (fn [v f] 
+      (if (keyword? f)
+        (get f v)
+        (f v)))
+    x fns))
+
+(defn log! [& vals]
+  (let [logger (:log (from-global :console))]
+    (apply logger (map sheer->js vals))))
+
+;; Strings
+
+(defn split [d s]
+  (.split s d))
+
+;; Cast
+
+(defn bool [v]
+  (not (not v)))
+
+(defn str [& vs]
+  (-> vs
+      (map (fn [v] (.toString v)))
+      (join "")))
