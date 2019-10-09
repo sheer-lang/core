@@ -93,3 +93,13 @@ describe("tail", () => {
     }
   );
 });
+
+describe("init", () => {
+  check.it(
+    "should take an immutable list and returns it, except for the last element",
+    gen.array(gen.any),
+    a => {
+      expect(core.init(im.List(a)).toJS()).toEqual(a.slice(0, -1));
+    }
+  );
+});
