@@ -147,3 +147,15 @@ describe("not", () => {
     expect(native.not(a)).toBe(!a);
   });
 });
+
+describe("objects_get", () => {
+  check.it(
+    "should take a object and a key, it returns the value of that key",
+    gen.arrayOrObject,
+    a => {
+      for (let i in a) {
+        expect(native.objects_get(i, a)).toBe(a[i]);
+      }
+    }
+  );
+});
