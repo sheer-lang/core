@@ -103,3 +103,13 @@ describe("init", () => {
     }
   );
 });
+
+describe("string?", () => {
+  check.it(
+    "should take an immutable list and returns it, except for the last element",
+    gen.string,
+    a => {
+      expect(core["string?"]).toBe(true);
+    }
+  );
+});
